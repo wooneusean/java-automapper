@@ -6,6 +6,7 @@ public class Bar {
     int c;
 
     public Bar() {
+        // For AutoMapper to work.
     }
 
     @Override

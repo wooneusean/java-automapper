@@ -2,11 +2,14 @@ package io.github.wooneusean.demo;
 
 import io.github.wooneusean.automapper.AutoMapper;
 import io.github.wooneusean.automapper.AutoMapperConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Main {
+    private static final Logger log = LogManager.getLogger();
+
     public static void main(String[] args) {
         AutoMapperConfiguration mapperConfig = new AutoMapperConfiguration();
-        mapperConfig.
         // addMapping() creates an AutoMapperDirective, optional to add,
         // by default will run default mapper
         mapperConfig.addMapping(Foo.class, Bar.class)
@@ -26,9 +29,9 @@ public class Main {
         AutoMapper autoMapper = new AutoMapper(mapperConfig);
         Foo foo = new Foo("12", true, 1337);
         Bar bar = autoMapper.map(foo, Bar.class);
-        System.out.println(bar);
+        log.info(bar);
         Foo newFoo = autoMapper.map(bar, Foo.class);
-        System.out.println(newFoo);
+        log.info(newFoo);
     }
 }
 

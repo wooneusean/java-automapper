@@ -1,8 +1,13 @@
 package io.github.wooneusean.automapper;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.Field;
 
 public class AutoMapper {
+    protected static final Logger log = LogManager.getLogger();
+
     private AutoMapperConfiguration config;
 
     public AutoMapper(AutoMapperConfiguration config) {
@@ -24,7 +29,7 @@ public class AutoMapper {
         try {
             holder = field.get(obj);
         } catch (IllegalAccessException e) {
-            System.out.printf("Cannot get value of field %s, maybe doesn't exist.%n", field.getName());
+            log.info("Cannot get value of field {}, maybe doesn't exist.", field.getName());
         }
         field.setAccessible(isAccessible);
         return holder;
@@ -37,7 +42,7 @@ public class AutoMapper {
         try {
             field.set(target, value);
         } catch (IllegalAccessException | IllegalArgumentException e) {
-            System.out.printf("Cannot set value of field %s, maybe type mismatch.%n", field.getName());
+            log.warn("Cannot set value of field {}, maybe type mismatch.", field.getName());
         }
 
         field.setAccessible(isAccessible);
@@ -59,7 +64,7 @@ public class AutoMapper {
         try {
             u = target.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            System.err.println("There is no default no-args constructor for this class. " + target.getName() + "()");
+            log.error("There is no default no-args constructor for this class. {}()", target.getName(), e);
             return null;
         }
 
