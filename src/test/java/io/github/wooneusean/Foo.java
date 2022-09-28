@@ -1,4 +1,4 @@
-package io.github.wooneusean.demo;
+package io.github.wooneusean;
 
 public class Foo {
     String a;
@@ -12,6 +12,7 @@ public class Foo {
     }
 
     public Foo() {
+        // For AutoMapper to work
     }
 
     @Override

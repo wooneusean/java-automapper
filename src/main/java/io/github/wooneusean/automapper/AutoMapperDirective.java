@@ -12,6 +12,11 @@ public class AutoMapperDirective<T, U> {
         this.to = to;
     }
 
+    public AutoMapperDirective(AutoMapperPair<T, U> pair) {
+        this.from = pair.getFirst();
+        this.to = pair.getSecond();
+    }
+
     @Override
     public int hashCode() {
         int result = 17;
@@ -45,6 +50,7 @@ public class AutoMapperDirective<T, U> {
     /**
      * Adds transformer function that will mutate the object
      * after it has been automatically mapped by default mapper.
+     *
      * @param transformer Lambda function that will describe mutations to be done on mapped object.
      * @return {@link AutoMapperDirective} instance.
      */

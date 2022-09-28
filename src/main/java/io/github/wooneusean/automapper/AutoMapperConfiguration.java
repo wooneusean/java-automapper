@@ -6,16 +6,21 @@ public class AutoMapperConfiguration {
     private HashMap<AutoMapperPair<?, ?>, AutoMapperDirective<?, ?>> directiveMap = new HashMap<>();
 
     <T, U> AutoMapperDirective<T, U> getDirective(AutoMapperPair<T, U> pair) {
-        return (AutoMapperDirective<T, U>) directiveMap.get(pair);
+        AutoMapperDirective<T, U> directive = (AutoMapperDirective<T, U>) directiveMap.get(pair);
+        if (directive == null) {
+            directive = new AutoMapperDirective<>(pair).withTransformer((t, u) -> u);
+        }
+        return directive;
     }
 
     /**
      * Adds mapping between two classes.
+     *
      * @param from Input class
-     * @param to Output class
+     * @param to   Output class
+     * @param <T>  Type of input class
+     * @param <U>  Type of output class
      * @return {@link AutoMapperDirective} instance.
-     * @param <T> Type of input class
-     * @param <U> Type of output class
      */
     public <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
         AutoMapperDirective<T, U> directive = new AutoMapperDirective<>(from, to);

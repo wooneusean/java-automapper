@@ -1,4 +1,4 @@
-package io.github.wooneusean.demo;
+package io.github.wooneusean;
 
 public class Bar {
     int a;

@@ -8,21 +8,30 @@ import java.lang.reflect.Field;
 public class AutoMapper {
     protected static final Logger log = LogManager.getLogger();
 
+    private static AutoMapper instance;
     private AutoMapperConfiguration config;
 
-    public AutoMapper(AutoMapperConfiguration config) {
-        this.config = config;
+    private AutoMapper(AutoMapperConfiguration config) {
+        setConfig(config);
     }
 
-    public AutoMapperConfiguration getConfig() {
-        return config;
+    private AutoMapper() {
     }
 
-    public void setConfig(AutoMapperConfiguration config) {
-        this.config = config;
+    public static void initialize(AutoMapperConfiguration config) {
+        if (instance == null) {
+            instance = new AutoMapper(config);
+        }
     }
 
-    private Object getFieldData(Field field, Object obj) {
+    public static AutoMapper getInstance() {
+        if (instance == null) {
+            throw new NullPointerException("AutoMapper has not been initialized yet.");
+        }
+        return instance;
+    }
+
+    private static Object getFieldData(Field field, Object obj) {
         boolean isAccessible = field.isAccessible();
         field.setAccessible(true);
         Object holder = null;
@@ -35,19 +44,6 @@ public class AutoMapper {
         return holder;
     }
 
-    private void setFieldData(Field field, Object target, Object value) {
-        boolean isAccessible = field.isAccessible();
-        field.setAccessible(true);
-
-        try {
-            field.set(target, value);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
-            log.warn("Cannot set value of field {}, maybe type mismatch.", field.getName());
-        }
-
-        field.setAccessible(isAccessible);
-    }
-
     /**
      * Attempts to map object to class. If mapping configuration is not
      * declared, default mapping will be used.
@@ -58,7 +54,7 @@ public class AutoMapper {
      * @param <U>    Type of class to map to.
      * @return <code>null</code> when mapping fails.
      */
-    public <T, U> U map(T victim, Class<U> target) {
+    public static <T, U> U map(T victim, Class<U> target) throws InstantiationException {
         Field[] targetFields = target.getDeclaredFields();
         U u;
         try {
@@ -79,8 +75,38 @@ public class AutoMapper {
             setFieldData(targetField, u, victimValue);
         }
 
-        return config.getDirective(new AutoMapperPair<>((Class<T>) victim.getClass(), target))
-                     .getTransformer()
-                     .apply(victim, u);
+
+        return AutoMapper.getInstance()
+                         .getConfig()
+                         .getDirective(new AutoMapperPair<>((Class<T>) victim.getClass(), target))
+                         .getTransformer()
+                         .apply(victim, u);
+    }
+
+    private static void setFieldData(Field field, Object target, Object value) {
+        boolean isAccessible = field.isAccessible();
+        field.setAccessible(true);
+
+        try {
+            field.set(target, value);
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            log.warn("Cannot set value of field {} on {}, maybe type mismatch.",
+                    field.getName(),
+                    target.getClass().getName());
+        }
+
+        field.setAccessible(isAccessible);
+    }
+
+    public static <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
+        return getInstance().getConfig().addMapping(from, to);
+    }
+
+    public AutoMapperConfiguration getConfig() {
+        return this.config;
+    }
+
+    public void setConfig(AutoMapperConfiguration config) {
+        this.config = config;
     }
 }
