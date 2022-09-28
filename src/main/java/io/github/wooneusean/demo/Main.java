@@ -6,6 +6,7 @@ import io.github.wooneusean.automapper.AutoMapperConfiguration;
 public class Main {
     public static void main(String[] args) {
         AutoMapperConfiguration mapperConfig = new AutoMapperConfiguration();
+        mapperConfig.
         // addMapping() creates an AutoMapperDirective, optional to add,
         // by default will run default mapper
         mapperConfig.addMapping(Foo.class, Bar.class)

@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class AutoMapperConfiguration {
     private HashMap<AutoMapperPair<?, ?>, AutoMapperDirective<?, ?>> directiveMap = new HashMap<>();
 
-    public <T, U> AutoMapperDirective<T, U> getDirective(AutoMapperPair<T, U> pair) {
+    <T, U> AutoMapperDirective<T, U> getDirective(AutoMapperPair<T, U> pair) {
         return (AutoMapperDirective<T, U>) directiveMap.get(pair);
     }
 

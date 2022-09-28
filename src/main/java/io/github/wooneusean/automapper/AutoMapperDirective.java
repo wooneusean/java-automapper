@@ -53,19 +53,19 @@ public class AutoMapperDirective<T, U> {
         return this;
     }
 
-    public Class<T> getFrom() {
+    Class<T> getFrom() {
         return from;
     }
 
-    public void setFrom(Class<T> from) {
+    void setFrom(Class<T> from) {
         this.from = from;
     }
 
-    public Class<U> getTo() {
+    Class<U> getTo() {
         return to;
     }
 
-    public void setTo(Class<U> to) {
+    void setTo(Class<U> to) {
         this.to = to;
     }
 }
