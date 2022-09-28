@@ -37,9 +37,11 @@ View full demo [here](https://github.com/wooneusean/java-automapper/blob/main/sr
         // constructor.
         Foo foo = new Foo("12", true, 1337);
         Bar bar = autoMapper.map(foo, Bar.class);
-        System.out.println(bar);
+        System.out.println(bar); 
+        // Bar{a=12, b='True', c=1337}
         Foo newFoo = autoMapper.map(bar, Foo.class);
-        System.out.println(newFoo);
+        System.out.println(newFoo); 
+        // Foo{a='12 mapped', b=true, c=420}
     }
 }
 ```
