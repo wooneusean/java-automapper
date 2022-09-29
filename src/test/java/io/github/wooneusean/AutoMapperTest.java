@@ -49,4 +49,33 @@ class AutoMapperTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void can_map_back_and_forth() {
+        Foo foo = new Foo("12", false, 1337);
+        AutoMapper.addMapping(Foo.class, Bar.class)
+                  .withTransformer((foof, bar) -> {
+                      bar.a = Integer.parseInt(foof.a);
+                      bar.b = foof.b ? "True" : "False";
+                      return bar;
+                  });
+
+        AutoMapper.addMapping(Bar.class, Foo.class)
+                  .withTransformer((bar, foof) -> {
+                      foof.a = bar.a + "";
+                      foof.b = bar.b.equalsIgnoreCase("True");
+                      return foof;
+                  });
+
+        try {
+            Bar bar = AutoMapper.map(foo, Bar.class);
+            Foo fooBar = AutoMapper.map(bar, Foo.class);
+            assertNotNull(fooBar);
+            assertEquals(fooBar.a, foo.a);
+            assertEquals(fooBar.b, foo.b);
+            assertEquals(fooBar.c, foo.c);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
