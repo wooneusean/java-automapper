@@ -17,13 +17,9 @@ class AutoMapperTest {
     @Test
     void can_map_fields_with_same_type_and_name() {
         Foo foo = new Foo("12", false, 1337);
-        try {
-            Bar bar = autoMapper.map(foo, Bar.class);
-            assertThat(bar).isNotNull();
-            assertThat(foo.c).isEqualTo(bar.c);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        }
+        Bar bar = autoMapper.map(foo, Bar.class);
+        assertThat(bar).isNotNull();
+        assertThat(foo.c).isEqualTo(bar.c);
     }
 
     @Test
@@ -34,15 +30,11 @@ class AutoMapperTest {
                       bar.a = Integer.parseInt(foof.a);
                       return bar;
                   });
-        try {
-            Bar bar = autoMapper.map(foo, Bar.class);
-            assertThat(bar).isNotNull();
-            assertThat(Integer.parseInt(foo.a)).isEqualTo(bar.a);
-            assertThat(bar.b).isNull();
-            assertThat(foo.c).isEqualTo(bar.c);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        }
+        Bar bar = autoMapper.map(foo, Bar.class);
+        assertThat(bar).isNotNull();
+        assertThat(Integer.parseInt(foo.a)).isEqualTo(bar.a);
+        assertThat(bar.b).isNull();
+        assertThat(foo.c).isEqualTo(bar.c);
     }
 
     @Test
@@ -62,15 +54,11 @@ class AutoMapperTest {
                       return foof;
                   });
 
-        try {
-            Bar bar = autoMapper.map(foo, Bar.class);
-            Foo fooBar = autoMapper.map(bar, Foo.class);
-            assertThat(fooBar).isNotNull();
-            assertThat(fooBar)
-                    .usingRecursiveComparison()
-                    .isEqualTo(foo);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        }
+        Bar bar = autoMapper.map(foo, Bar.class);
+        Foo fooBar = autoMapper.map(bar, Foo.class);
+        assertThat(fooBar).isNotNull();
+        assertThat(fooBar)
+                .usingRecursiveComparison()
+                .isEqualTo(foo);
     }
 }

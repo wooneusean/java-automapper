@@ -1,7 +1,10 @@
 package io.github.wooneusean.automapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 
+@Slf4j
 public class AutoMapperConfiguration {
     private final HashMap<AutoMapperPair<?, ?>, AutoMapperDirective<?, ?>> directiveMap = new HashMap<>();
 
@@ -25,6 +28,7 @@ public class AutoMapperConfiguration {
     public <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
         AutoMapperDirective<T, U> directive = new AutoMapperDirective<>(from, to);
         directiveMap.put(new AutoMapperPair<>(from, to), directive);
+        log.info("Added mapping [{}] -> [{}]", from.getName(), to.getName());
         return directive;
     }
 }

@@ -2,8 +2,8 @@ package io.github.wooneusean;
 
 public class Foo {
     String a;
-    boolean b;
-    int c;
+    Boolean b;
+    Integer c;
 
     public Foo(String a, boolean b, int c) {
         this.a = a;

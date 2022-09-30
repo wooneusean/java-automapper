@@ -4,11 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 @Component
 public class AutoMapper {
     private AutoMapperConfiguration config = new AutoMapperConfiguration();
+
+    public <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
+        return this.getConfig().addMapping(from, to);
+    }
 
     private void setFieldData(Field field, Object target, Object value) {
         boolean isAccessible = field.isAccessible();
@@ -17,16 +22,12 @@ public class AutoMapper {
         try {
             field.set(target, value);
         } catch (IllegalAccessException | IllegalArgumentException e) {
-            log.warn("Cannot set value of field {} on {}, maybe type mismatch.",
+            log.warn("Cannot set value of field [{}] on [{}], maybe type mismatch.",
                     field.getName(),
                     target.getClass().getName());
         }
 
         field.setAccessible(isAccessible);
-    }
-
-    public <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
-        return this.getConfig().addMapping(from, to);
     }
 
     private Object getFieldData(Field field, Object obj) {
@@ -52,12 +53,15 @@ public class AutoMapper {
      * @param <U>    Type of class to map to.
      * @return <code>null</code> when mapping fails.
      */
-    public <T, U> U map(T victim, Class<U> target) throws InstantiationException {
+    public <T, U> U map(T victim, Class<U> target) {
         Field[] targetFields = target.getDeclaredFields();
         U u;
         try {
-            u = target.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            u = target.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException |
+                 IllegalAccessException |
+                 NoSuchMethodException |
+                 InvocationTargetException e) {
             log.error("There is no default no-args constructor for this class. {}()", target.getName(), e);
             return null;
         }

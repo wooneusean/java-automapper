@@ -1,9 +1,9 @@
 package io.github.wooneusean;
 
 public class Bar {
-    int a;
+    Integer a;
     String b;
-    int c;
+    Integer c;
 
     public Bar() {
         // For AutoMapper to work.

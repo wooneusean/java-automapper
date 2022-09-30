@@ -1,7 +1,10 @@
 package io.github.wooneusean.automapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.function.BiFunction;
 
+@Slf4j
 public class AutoMapperDirective<T, U> {
     private Class<T> from;
     private Class<U> to;
@@ -45,6 +48,7 @@ public class AutoMapperDirective<T, U> {
 
     void setTransformer(BiFunction<T, U, U> transformer) {
         this.transformer = transformer;
+        log.info("Added transformer [{}] -> [{}]", from.getName(), to.getName());
     }
 
     /**
@@ -55,7 +59,7 @@ public class AutoMapperDirective<T, U> {
      * @return {@link AutoMapperDirective} instance.
      */
     public AutoMapperDirective<T, U> withTransformer(BiFunction<T, U, U> transformer) {
-        this.transformer = transformer;
+        setTransformer(transformer);
         return this;
     }
 
