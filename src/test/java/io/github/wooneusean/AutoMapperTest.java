@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Slf4j
@@ -19,8 +19,8 @@ class AutoMapperTest {
         Foo foo = new Foo("12", false, 1337);
         try {
             Bar bar = autoMapper.map(foo, Bar.class);
-            assertNotNull(bar);
-            assertEquals(foo.c, bar.c);
+            assertThat(bar).isNotNull();
+            assertThat(foo.c).isEqualTo(bar.c);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -36,10 +36,10 @@ class AutoMapperTest {
                   });
         try {
             Bar bar = autoMapper.map(foo, Bar.class);
-            assertNotNull(bar);
-            assertEquals(Integer.parseInt(foo.a), bar.a);
-            assertNull(bar.b);
-            assertEquals(foo.c, bar.c);
+            assertThat(bar).isNotNull();
+            assertThat(Integer.parseInt(foo.a)).isEqualTo(bar.a);
+            assertThat(bar.b).isNull();
+            assertThat(foo.c).isEqualTo(bar.c);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -65,10 +65,10 @@ class AutoMapperTest {
         try {
             Bar bar = autoMapper.map(foo, Bar.class);
             Foo fooBar = autoMapper.map(bar, Foo.class);
-            assertNotNull(fooBar);
-            assertEquals(fooBar.a, foo.a);
-            assertEquals(fooBar.b, foo.b);
-            assertEquals(fooBar.c, foo.c);
+            assertThat(fooBar).isNotNull();
+            assertThat(fooBar)
+                    .usingRecursiveComparison()
+                    .isEqualTo(foo);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         }
