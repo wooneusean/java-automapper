@@ -2,8 +2,6 @@
 AutoMapper for Java inspired by [AutoMapper for C#](https://github.com/AutoMapper/AutoMapper)
 
 ## Demo
-View full demo [here](https://github.com/wooneusean/java-automapper/blob/main/src/main/java/io/github/wooneusean/demo/Main.java)
-
 ```java
  @Component
  @Slf4j
