@@ -1,37 +1,35 @@
 package io.github.wooneusean.automapper;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 
+@Slf4j
+@Component
 public class AutoMapper {
-    protected static final Logger log = LogManager.getLogger();
+    private AutoMapperConfiguration config = new AutoMapperConfiguration();
 
-    private static AutoMapper instance;
-    private AutoMapperConfiguration config;
+    private void setFieldData(Field field, Object target, Object value) {
+        boolean isAccessible = field.isAccessible();
+        field.setAccessible(true);
 
-    private AutoMapper(AutoMapperConfiguration config) {
-        setConfig(config);
-    }
-
-    private AutoMapper() {
-    }
-
-    public static void initialize(AutoMapperConfiguration config) {
-        if (instance == null) {
-            instance = new AutoMapper(config);
+        try {
+            field.set(target, value);
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            log.warn("Cannot set value of field {} on {}, maybe type mismatch.",
+                    field.getName(),
+                    target.getClass().getName());
         }
+
+        field.setAccessible(isAccessible);
     }
 
-    public static AutoMapper getInstance() {
-        if (instance == null) {
-            throw new NullPointerException("AutoMapper has not been initialized yet.");
-        }
-        return instance;
+    public <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
+        return this.getConfig().addMapping(from, to);
     }
 
-    private static Object getFieldData(Field field, Object obj) {
+    private Object getFieldData(Field field, Object obj) {
         boolean isAccessible = field.isAccessible();
         field.setAccessible(true);
         Object holder = null;
@@ -54,7 +52,7 @@ public class AutoMapper {
      * @param <U>    Type of class to map to.
      * @return <code>null</code> when mapping fails.
      */
-    public static <T, U> U map(T victim, Class<U> target) throws InstantiationException {
+    public <T, U> U map(T victim, Class<U> target) throws InstantiationException {
         Field[] targetFields = target.getDeclaredFields();
         U u;
         try {
@@ -76,30 +74,10 @@ public class AutoMapper {
         }
 
 
-        return AutoMapper.getInstance()
-                         .getConfig()
-                         .getDirective(new AutoMapperPair<>((Class<T>) victim.getClass(), target))
-                         .getTransformer()
-                         .apply(victim, u);
-    }
-
-    private static void setFieldData(Field field, Object target, Object value) {
-        boolean isAccessible = field.isAccessible();
-        field.setAccessible(true);
-
-        try {
-            field.set(target, value);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
-            log.warn("Cannot set value of field {} on {}, maybe type mismatch.",
-                    field.getName(),
-                    target.getClass().getName());
-        }
-
-        field.setAccessible(isAccessible);
-    }
-
-    public static <T, U> AutoMapperDirective<T, U> addMapping(Class<T> from, Class<U> to) {
-        return getInstance().getConfig().addMapping(from, to);
+        return this.getConfig()
+                   .getDirective(new AutoMapperPair<>((Class<T>) victim.getClass(), target))
+                   .getTransformer()
+                   .apply(victim, u);
     }
 
     public AutoMapperConfiguration getConfig() {

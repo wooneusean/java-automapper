@@ -3,7 +3,7 @@ package io.github.wooneusean.automapper;
 import java.util.HashMap;
 
 public class AutoMapperConfiguration {
-    private HashMap<AutoMapperPair<?, ?>, AutoMapperDirective<?, ?>> directiveMap = new HashMap<>();
+    private final HashMap<AutoMapperPair<?, ?>, AutoMapperDirective<?, ?>> directiveMap = new HashMap<>();
 
     <T, U> AutoMapperDirective<T, U> getDirective(AutoMapperPair<T, U> pair) {
         AutoMapperDirective<T, U> directive = (AutoMapperDirective<T, U>) directiveMap.get(pair);
